@@ -1,68 +1,31 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+export const dynamic = 'force-dynamic';
+import styles from "./page.module.scss";
+import db from '@/lib/db.ts';
+import type { Todo } from '@/models/todo.ts';
+import createTodo from '@/actions/create-todo.ts';
+import DeleteTodo from '@/components/delete-todo-btn.tsx';
+import Submit from '@/ui/submit.tsx';
+import database from '@/app/api/database.ts';
+import { connection } from 'next/server';
+;
 
-export default function Home() {
+export default async function Home() {
+  await connection();
+  const stmt = database.prepare('SELECT * FROM todos');
+  const rows = stmt.all()
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <h1 className={styles.heading}>Todo App</h1>
+        <ul className={styles.todos}>
+          {rows.map((todo: Todo) => (
+            <li key={todo.id}>{todo.id}. {todo.task} <DeleteTodo todoId={todo.id}/></li>
+          ))}
+        </ul>
+        <form className={styles.form} action={createTodo}>
+          <input  type="text" name="task" />
+          <Submit type="submit">Submit</Submit>
+        </form>
       </main>
     </div>
   );
