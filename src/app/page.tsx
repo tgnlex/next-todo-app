@@ -1,17 +1,16 @@
 export const dynamic = 'force-dynamic';
 import styles from "./page.module.scss";
-import db from '@/lib/db.ts';
 import type { Todo } from '@/models/todo.ts';
 import createTodo from '@/actions/create-todo.ts';
 import DeleteTodo from '@/components/delete-todo-btn.tsx';
 import Submit from '@/ui/submit.tsx';
-import database from '@/app/api/database.ts';
+import db from '@/lib/database.ts';
 import { connection } from 'next/server';
-;
+
 
 export default async function Home() {
   await connection();
-  const stmt = database.prepare('SELECT * FROM todos');
+  const stmt = db.prepare('SELECT * FROM todos');
   const rows = stmt.all()
   return (
     <div className={styles.page}>

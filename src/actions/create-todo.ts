@@ -1,5 +1,5 @@
 "use server"
-import db from '@/app/api/database.ts';
+import db from '@/lib/database.ts';
 import { revalidatePath } from 'next/cache';
 
 
